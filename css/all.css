@@ -54,8 +54,11 @@ body {
   overflow-y: scroll;
 }
 
-.lyrics-box {
-  border: 1px solid #dadada;
+.card :hover{
+ border-color: blueviolet 2px solid;
+ background-color: gainsboro;
+
+
 }
 
 
