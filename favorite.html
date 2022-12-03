@@ -25,7 +25,7 @@
 
 <body> 
       <!-- Navbar -->
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div class="container-fluid">
           <a class="navbar-brand" href="#"> Favorite List 我的最愛電影</a>
           <button
@@ -65,16 +65,16 @@
                 <!-- 搜尋列 -->
             <form class="row row-cols-lg-auto g-3 align-items-center" id="search-form">
               <div class="col-12">
-                <label class="visually-hidden" for="search-input">輸入關鍵字</label>
-                <input type="text" class="form-control" id="search-input"  placeholder="請輸入關鍵字">
+                <label class="visually-hidden" for="search-input">輸入電影名稱關鍵字</label>
+                <input type="text" class="form-control" id="search-input"  placeholder="請輸入電影名稱關鍵字">
             </div>
-              <div class="col-12">
+              <div class="col-6">
                 <button 
                 type="submit" 
                 class="btn btn-primary" 
                 id="search-submit-button">搜尋</button>
               </div>
-              <div class="col-12">
+              <div class="col-6">
                 <button 
                 type="button" 
                 class="btn btn-info" 
@@ -150,7 +150,12 @@
   </div>
 </div>
 
-
+<!-- 表尾 -->
+<nav class="navbar fixed-bottom navbar-light bg-light">
+  <div class="container justify-content-end">
+    <p class="h6 navbar-brand " >電影清單練習 MH.W@2022</p>
+  </div>
+</nav>
   
 
 <!-- 引入axios -->

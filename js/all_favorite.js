@@ -1,6 +1,3 @@
-// 其他同學優化:
-// 預設解答: 
-
 //1. API卡片用 https://getbootstrap.com/docs/4.0/components/navs/
 // https://github.com/ALPHACamp/movie-list-api#readme
 
@@ -8,44 +5,10 @@ const BASE_URL = 'https://movie-list.alphacamp.io'
 const INDEX_URL = BASE_URL + '/api/v1/movies/'
 const POSTER_URL = BASE_URL + '/posters/'
 
-//最重要，要改這邊，是從localStorge引入 我的最愛資料
+//2.最重要，要改這邊，是從localStorge引入 我的最愛資料
 const allmovies = JSON.parse(localStorage.getItem('favoriteMovies')) || [];
 console.log(allmovies);
 
-
-
-// axios
-//   .get(INDEX_URL) // 修改這裡
-  // .then((response) => {
-    // console.log(response)
-    // console.log(response.data)
-    // console.log(response.data.results)
-  //   for (const movie of response.data.results) {
-  //     allmovies.push(movie)
-  //   }
-  //   // console.log(allmovies) 
-  //   renderMovieList(allmovies);
-  // })
-  // .catch((err) => console.log(err))
-
-
-  //注意: 如果直接 allmovies.push(response.data.results)，那 allmovies 會變成一個只有 1 個元素的陣列
-  //因此需要用迭代器像 for-of 來整理，把 response.data.results 陣列中的元素一個個拿出來，再推進 allmovies 裡
-
-  //方法一 for
-  // for (const movie of response.data.results) {
-  //     allmovies.push(movie)
-  //   }
-
-  //方法二 ES6 展開運算子(三個點+陣列)
-  // allmovies.push(...response.data.results)
-  // console.log(allmovies)
-
-  // 以上 說明後，寫回axios中
-
-
-  //2. 渲染卡片
-  //寫完 renderMovieList 之後，要調用函式。請在 axios 程式碼中的 then() 中呼叫它，並把 allmovies 傳進去：
 
 const dataPanel = document.querySelector('#data-panel')
 
@@ -61,43 +24,24 @@ dataPanel.addEventListener('click',function onPanelClicked(e){
     }
  })
 
-//移除最愛
+//3.移除最愛
 function removeFromFavorite(id) {
   //防止 movies 是空陣列的狀況
   if (!allmovies || !allmovies.length) return 
-
   //透過 id 找到要刪除電影的 index
   //findIndex 只告訴我們那個項目的 index。 若沒能找到符合的項目，則會回傳 -1
   const movieIndex = allmovies.findIndex((movie) => movie.id === id)
   if(movieIndex === -1) return
-
   //刪除該筆電影
   allmovies.splice(movieIndex,1)
-
   //存回 local storage
   localStorage.setItem('favoriteMovies', JSON.stringify(allmovies))
-
-  //更新頁面
+  //更新 重新渲染頁面
   renderMovieList(allmovies)
 }
 
 
-
-//加入最愛
-function addToFavorite(id) {
-  const list = JSON.parse(localStorage.getItem('favoriteMovies')) || []
-  //相較於filter 方法在陣列做篩選會找全部，find在找到第一個符合條件的 item 後就回停下來回傳該 item值。
-  const lovemovie = allmovies.find(function(allmovies) {return allmovies.id === id} )
-  // console.log("69:"+lovemovie.title);
-  //  console.log(lovemovie);
-  if (list.some(function(allmovies) {return allmovies.id === id})) {
-    return alert('此電影已經在收藏清單中了！')
-  }
-  list.push(lovemovie)
-  localStorage.setItem('favoriteMovies', JSON.stringify(list))
-}
-
-
+//4. 渲染卡片
 
 function renderMovieList(data) {
   let rawHTML = ''
@@ -124,7 +68,7 @@ function renderMovieList(data) {
   dataPanel.innerHTML = rawHTML
 }
 
-//3. API 盒子用 https://github.com/ALPHACamp/movie-list-api#readme
+//5. API 盒子用 https://github.com/ALPHACamp/movie-list-api#readme
 
 function showMovieModal(id) {
   const modalTitle = document.querySelector('#movie-modal-title')
@@ -142,7 +86,7 @@ function showMovieModal(id) {
 }
 
 
-//4.設定搜尋列的監聽器
+//6.設定搜尋列的監聽器
 
 const searchForm = document.querySelector('#search-form')
 const searchInput = document.querySelector('#search-input')
@@ -194,12 +138,14 @@ const showallbutton = document.querySelector('#show-all-button')
 showallbutton.addEventListener('click',function showall(){
   console.log("showall");
   renderMovieList(allmovies);
+  //解決小BUG 點及分頁會清除搜尋欄位的資料
+  searchInput.value = '';
+  //把最下面的分頁 改成1頁
+  let str=''; 
+  str +=`<li class="page-item"><a class="page-link" href=" " data-page="1">1</a></li>`
+  paginator.innerHTML = str;
 })
 
-
-//處理 增加我的最愛 的 電影
-
-const addfavoritebtn = document.querySelector(".btn-add-favorite"); 
 
 
 
