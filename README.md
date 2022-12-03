@@ -21,13 +21,17 @@ movielist 電影清單
 3. 建立動態電影陣列，並利用 [Element.innerHTML](https://developer.mozilla.org/zh-TW/docs/Web/API/Element/innerHTML) 渲染卡片清單。
 
 ## 功能介紹
-- 主要內容趨顯示 全部電影的 清單。
+- 主要內容顯示全部電影的清單，並有分頁設計。
+- 具有RWD響應式設計，導覽列在手機上會縮成漢堡選單。
 - 點選More 按鈕會有彈出視窗，可以看到電影的更多資訊。
-- 點選+ 按鈕 可以加入最愛蒐藏電影。
-- 可利用上方搜尋功能，搜尋電影資訊。
+- 點選+ 按鈕 可以加入最愛蒐藏電影。並於另外分頁中顯示。
+- 可利用上方搜尋功能，搜尋電影資訊，方便瀏覽訊息。
 
 ## 介面展示
-![image](https://github.com/tomy5566/lyricsPanel/blob/main/Lyrics_demo_gif.gif)
+PC
+![image](https://github.com/tomy5566/movielist/blob/main/movie_demo_01.JPG)
+RWD
+![image](https://github.com/tomy5566/movielist/blob/main/movie_demo_02.JPG)
 
 
 ## 參考資料
