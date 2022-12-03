@@ -8,7 +8,7 @@ const BASE_URL = 'https://movie-list.alphacamp.io'
 const INDEX_URL = BASE_URL + '/api/v1/movies/'
 const POSTER_URL = BASE_URL + '/posters/'
 
-const movies = [];
+const allmovies = [];
 
 axios
   .get(INDEX_URL) // 修改這裡
@@ -17,41 +17,41 @@ axios
     // console.log(response.data)
     // console.log(response.data.results)
     for (const movie of response.data.results) {
-      movies.push(movie)
+      allmovies.push(movie)
     }
-    // console.log(movies) 
-    renderMovieList(movies);
+    // console.log(allmovies) 
+    renderMovieList(allmovies);
   })
   .catch((err) => console.log(err))
 
 
-  //注意: 如果直接 movies.push(response.data.results)，那 movies 會變成一個只有 1 個元素的陣列
-  //因此需要用迭代器像 for-of 來整理，把 response.data.results 陣列中的元素一個個拿出來，再推進 movies 裡
+  //注意: 如果直接 allmovies.push(response.data.results)，那 allmovies 會變成一個只有 1 個元素的陣列
+  //因此需要用迭代器像 for-of 來整理，把 response.data.results 陣列中的元素一個個拿出來，再推進 allmovies 裡
 
   //方法一 for
   // for (const movie of response.data.results) {
-  //     movies.push(movie)
+  //     allmovies.push(movie)
   //   }
 
   //方法二 ES6 展開運算子(三個點+陣列)
-  // movies.push(...response.data.results)
-  // console.log(movies)
+  // allmovies.push(...response.data.results)
+  // console.log(allmovies)
 
   // 以上 說明後，寫回axios中
 
 
   //2. 渲染卡片
-  //寫完 renderMovieList 之後，要調用函式。請在 axios 程式碼中的 then() 中呼叫它，並把 movies 傳進去：
+  //寫完 renderMovieList 之後，要調用函式。請在 axios 程式碼中的 then() 中呼叫它，並把 allmovies 傳進去：
 
 const dataPanel = document.querySelector('#data-panel')
 
 // 監聽 data panel ，設置彈出視窗的MORE的委派點擊事件
-dataPanel.addEventListener('click',function onPanelClicked(event){
-  if (event.target.matches('.btn-show-movie')) {
-    // console.log(event.target)
-    // console.log(event)
-    // console.log(event.target.dataset.id)
-    showMovieModal(Number(event.target.dataset.id)) ;
+dataPanel.addEventListener('click',function onPanelClicked(e){
+  if (e.target.matches('.btn-show-movie')) {
+    // console.log(e.target)
+    // console.log(e)
+    // console.log(e.target.dataset.id)
+    showMovieModal(Number(e.target.dataset.id)) ;
    }
 })
 
@@ -98,5 +98,58 @@ function showMovieModal(id) {
             modalImage.innerHTML = `<img src="${POSTER_URL + data.image}" alt="movie-poster" class="img-fluid">`
           })
 }
+
+
+//4.設定搜尋列的監聽器
+
+const searchForm = document.querySelector('#search-form')
+const searchInput = document.querySelector('#search-input')
+//監聽表單提交事件
+//注意因為是使用"submit"會自動更新傳送，qq會一閃而過，所以要使用e.preventDefault()去排除預設狀況
+ searchForm.addEventListener('submit', function onSearchFormSubmitted(e)  {
+    e.preventDefault()
+    // console.log('qq') ;
+
+    //抓輸入值，並且用trim()把字串的頭尾空格去掉。再轉小寫。    
+    const keyword = searchInput.value.trim().toLowerCase();
+    //  if (!keyword.length) {
+    //   return alert('請輸入有效內容！')
+    // }
+
+    let filteredMovies = [];
+
+    for (const movie of allmovies) {
+      if (movie.title.toLowerCase().includes(keyword)) {
+      filteredMovies.push(movie)
+        }
+    }
+    // console.log(filteredMovies);
+    // 方法二 :上面 條件篩選 也可以改寫成以下這方法
+    // filteredMovies = allmovies.filter((movie) =>
+    // movie.title.toLowerCase().includes(keyword)
+
+
+    //無符合條件結果時的狀態 (代表過濾抓到的 filteredMovies = [] 是空的)
+    if (filteredMovies.length === 0) {
+      return alert(`沒有符合 您輸入的關鍵字：${keyword} 條件的電影`)
+    }
+
+    renderMovieList(filteredMovies);
+
+  })
+
+//用 includes 查詢某一字串中是否包含特定字串，並會區分大小寫
+// const str = 'This is a yellow dog'
+//console.log(str.includes('yellow'))   // true
+//console.log(str.includes('cat'))   // false
+
+
+//顯示全部電影的按鈕
+const showallbutton = document.querySelector('#show-all-button')
+showallbutton.addEventListener('click',function showall(){
+  console.log("showall");
+  renderMovieList(allmovies);
+})
+
 
 

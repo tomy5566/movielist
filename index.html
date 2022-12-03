@@ -63,16 +63,22 @@
       <div class="container mt-5">
         <div class="row mb-3">
                 <!-- 搜尋列 -->
-            <form class="row row-cols-lg-auto g-3 align-items-center">
+            <form class="row row-cols-lg-auto g-3 align-items-center" id="search-form">
               <div class="col-12">
                 <label class="visually-hidden" for="search-input">輸入關鍵字</label>
-                <input type="text" class="form-control" id="search-input"  placeholder="Keyword...">
+                <input type="text" class="form-control" id="search-input"  placeholder="請輸入關鍵字">
             </div>
               <div class="col-12">
                 <button 
                 type="submit" 
                 class="btn btn-primary" 
                 id="search-submit-button">搜尋</button>
+              </div>
+              <div class="col-12">
+                <button 
+                type="button" 
+                class="btn btn-info" 
+                id="show-all-button">顯示全部電影</button>
               </div>
             </form>
         </div>
