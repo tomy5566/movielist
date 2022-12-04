@@ -34,9 +34,10 @@ movielist 電影清單
 
 ## 介面展示
 PC
-![image](https://github.com/tomy5566/movielist/blob/main/movie_demo_01.JPG)
+![image](https://github.com/tomy5566/movielist/blob/main/movie_demo_gif.gif)
+
 RWD
-![image](https://github.com/tomy5566/movielist/blob/main/movie_demo_02.JPG)
+![image](https://github.com/tomy5566/movielist/blob/main/movie_demo_mb_gif.gif)
 
 
 ## 參考資料
