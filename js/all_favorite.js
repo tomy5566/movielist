@@ -11,7 +11,6 @@ console.log(allmovies);
 
 
 const dataPanel = document.querySelector('#data-panel')
-
 // 監聽 data panel ，設置彈出視窗的MORE的委派點擊事件
 dataPanel.addEventListener('click',function onPanelClicked(e){
   if (e.target.matches('.btn-show-movie')) {
@@ -24,20 +23,31 @@ dataPanel.addEventListener('click',function onPanelClicked(e){
     }
  })
 
+
 //3.移除最愛
 function removeFromFavorite(id) {
   //防止 movies 是空陣列的狀況
   if (!allmovies || !allmovies.length) return 
   //透過 id 找到要刪除電影的 index
-  //findIndex 只告訴我們那個項目的 index。 若沒能找到符合的項目，則會回傳 -1
-  const movieIndex = allmovies.findIndex((movie) => movie.id === id)
+  //findIndex 只告訴我們那個項目的 index索引。 若沒能找到符合的項目，則會回傳 -1
+  const movieIndex = allmovies.findIndex((movie) => movie.id === id);
+  // console.log(movieIndex);
+  // console.log(id );
   if(movieIndex === -1) return
   //刪除該筆電影
   allmovies.splice(movieIndex,1)
   //存回 local storage
   localStorage.setItem('favoriteMovies', JSON.stringify(allmovies))
-  //更新 重新渲染頁面
-  renderMovieList(allmovies)
+  //更新 重新渲染頁面，也要重製分頁器
+
+  // 先找出被刪除的電影那一頁，避免畫面都跳回第一頁
+  const nowpage = Math.ceil(movieIndex / 12 );
+  // renderMovieList(allmovies)
+  renderMovieList(getMoviesByPage(nowpage));
+  renderPaginator(allmovies.length);
+
+
+  
 }
 
 
@@ -59,7 +69,7 @@ function renderMovieList(data) {
         </div>
         <div class="card-footer"> 
           <button class="btn btn-primary btn-show-movie" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${item.id}">More</button>
-          <button class="btn btn-danger btn-del-favorite" data-id="${item.id}">x</button>
+          <button class="btn btn-warning btn-del-favorite" data-id="${item.id}">x</button>
         </div>
       </div>
     </div>
@@ -90,9 +100,11 @@ function showMovieModal(id) {
 
 const searchForm = document.querySelector('#search-form')
 const searchInput = document.querySelector('#search-input')
+
 //監聽表單提交事件
 //注意因為是使用"submit"會自動更新傳送，qq會一閃而過，所以要使用e.preventDefault()去排除預設狀況
- searchForm.addEventListener('submit', function onSearchFormSubmitted(e)  {
+let filteredMovies = []; 
+searchForm.addEventListener('submit', function onSearchFormSubmitted(e)  {
     e.preventDefault()
     // console.log('qq') ;
 
@@ -102,11 +114,8 @@ const searchInput = document.querySelector('#search-input')
     //   return alert('請輸入有效內容！')
     // }
 
-
     //filter 篩選
-
-    let filteredMovies = [];
-
+    filteredMovies = [];
     for (const movie of allmovies) {
       if (movie.title.toLowerCase().includes(keyword)) {
       filteredMovies.push(movie)
@@ -122,9 +131,13 @@ const searchInput = document.querySelector('#search-input')
     if (filteredMovies.length === 0) {
       return alert(`沒有符合 您輸入的關鍵字：${keyword} 條件的電影`)
     }
-
-    renderMovieList(filteredMovies);
-
+    
+    //重製分頁器
+    renderPaginator(filteredMovies.length) 
+    //重新渲染 預設顯示第 1 頁的搜尋結果
+    // renderMovieList(filteredMovies);
+    renderMovieList(getMoviesByPage(1));   
+    
   })
 
 //用 includes 查詢某一字串中是否包含特定字串，並會區分大小寫
@@ -148,6 +161,53 @@ showallbutton.addEventListener('click',function showall(){
 
 
 
+//6. 重要新技巧: 分頁設定pagination，切出要的部分資料
+const MOVIES_PER_PAGE = 12 
+function getMoviesByPage(page) {
+  //利用三元運算子判斷，是要用allmovies還是搜尋後的值filteredMovies
+  const data = filteredMovies.length ? filteredMovies : allmovies
+  console.log("170:"+filteredMovies.length);
 
-//重新渲染(要放在後面)
-renderMovieList(allmovies);
+  //計算起始 index，第一頁0開始(0-11)，第二頁12開始(12-23)，依此類推
+  const startIndex = (page - 1) * MOVIES_PER_PAGE
+  //回傳切割後的新陣列，注意第二個參數  index 並不會包含在新陣列中
+  return data.slice(startIndex, startIndex + MOVIES_PER_PAGE)
+} 
+
+
+//6.1 計算有幾個分頁的頁碼，再重新渲染到頁面下方 
+const paginator = document.querySelector("#paginator"); 
+function renderPaginator(amount) {
+  //計算總頁數，利用Math.ceil()的小數點無條件進位 功能 
+  const numberOfPages = Math.ceil(amount / MOVIES_PER_PAGE)
+  //製作 頁數碼 template 
+  let str = '';
+  for (let page = 1; page <= numberOfPages; page++) {
+    str += `<li class="page-item"><a class="page-link" href="#" data-page="${page}">${page}</a></li>`
+   }
+  //放回 HTML  
+  paginator.innerHTML = str;
+  
+  
+}
+
+//點擊到分頁的頁碼 a 標籤，呼叫 renderMovieList 根據指定的頁數重新渲染頁面
+paginator.addEventListener('click', function onPaginatorClicked(e) {
+  //如果被點擊的不是 a 標籤，結束
+  if (e.target.tagName !== 'A') return  
+  //透過 dataset 取得被點擊的頁數
+  const page = Number(e.target.dataset.page)
+  //更新畫面，注意，丟進去的是 被切過的allmovies的資料
+  renderMovieList(getMoviesByPage(page))
+  //解決小BUG 點擊分頁會清除搜尋欄位的資料(但搜尋時不會清掉)
+  if (filteredMovies.length !== 0) {
+    return ;
+  }
+  searchInput.value = '';
+})
+
+
+//重新渲染(要放在後面)，注意要重製分頁標籤renderPaginator在最下面
+// renderMovieList(allmovies);
+renderMovieList(getMoviesByPage(1));
+renderPaginator(allmovies.length);

@@ -16,7 +16,7 @@ axios
     for (const movie of response.data.results) {
       allmovies.push(movie)
     }
-    // console.log(allmovies) 
+    console.log(allmovies) 
     //輸出全部電影
     // renderMovieList(allmovies);
     //更改成分頁設計 每次輸出一點(12個)
@@ -35,15 +35,41 @@ axios
   // for (const movie of response.data.results) {
   //     allmovies.push(movie)
   //   }
-
   //方法二 ES6 展開運算子(三個點+陣列)
   // allmovies.push(...response.data.results)
   // console.log(allmovies)
 
   // 以上 說明後，寫回axios中
 
-  //2. 渲染卡片
-  //寫完 renderMovieList 之後，要調用函式。請在 axios 程式碼中的 then() 中呼叫它，並把 allmovies 傳進去：
+
+//2. 渲染卡片
+//寫完 renderMovieList 之後，要調用函式。要在 axios 程式碼中的 then() 中呼叫它，並把 allmovies 傳進去：
+
+function renderMovieList(data) {
+  let str = ''
+  data.forEach((item) => {
+    // title, image  //注意card-footer 有增加 data-id="${item.id}"
+    //For each 中 item 就是陣列data 裡面的每一個元素。https://ithelp.ithome.com.tw/articles/10228571
+    str += `<div class="col-sm-3">
+    <div class="mb-2">
+      <div class="card">
+        <img src="${
+          POSTER_URL + item.image
+        }" class="card-img-top" alt="Movie Poster">
+        <div class="card-body">
+          <h5 class="card-title">${item.title}</h5>
+        </div>
+        <div class="card-footer"> 
+          <button class="btn btn-primary btn-show-movie" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${item.id}">More</button>
+          <button class="btn btn-danger btn-add-favorite" data-id="${item.id}">❤</button>
+        </div>
+      </div>
+    </div>
+  </div>`
+  })
+  dataPanel.innerHTML = str;
+}
+
 
 const dataPanel = document.querySelector('#data-panel')
 
@@ -59,52 +85,11 @@ dataPanel.addEventListener('click',function onPanelClicked(e){
     // console.log(e)
     // console.log(e.target.dataset.id)
     addToFavorite(Number(e.target.dataset.id));
-    // console.log(Number(e.target.dataset.id));
-   }
+    }
 })
 
-//加入最愛
-function addToFavorite(id) {
-  const list = JSON.parse(localStorage.getItem('favoriteMovies')) || []
-  //相較於filter 方法在陣列做篩選會找全部，find在找到第一個符合條件的 item 後就回停下來回傳該 item值。
-  const lovemovie = allmovies.find(function(allmovies) {return allmovies.id === id} )
-  // console.log("69:"+lovemovie.title);
-  //  console.log(lovemovie);
-  if (list.some(function(allmovies) {return allmovies.id === id})) {
-    return alert('此電影已經在收藏清單中了！')
-  }
-  list.push(lovemovie)
-  localStorage.setItem('favoriteMovies', JSON.stringify(list))
-}
 
-
-
-function renderMovieList(data) {
-  let rawHTML = ''
-  data.forEach((item) => {
-    // title, image  //注意card-footer 有增加 data-id="${item.id}"
-    //For each 中 item 就是陣列data 裡面的每一個元素。https://ithelp.ithome.com.tw/articles/10228571
-    rawHTML += `<div class="col-sm-3">
-    <div class="mb-2">
-      <div class="card">
-        <img src="${
-          POSTER_URL + item.image
-        }" class="card-img-top" alt="Movie Poster">
-        <div class="card-body">
-          <h5 class="card-title">${item.title}</h5>
-        </div>
-        <div class="card-footer"> 
-          <button class="btn btn-primary btn-show-movie" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${item.id}">More</button>
-          <button class="btn btn-info btn-add-favorite" data-id="${item.id}">+</button>
-        </div>
-      </div>
-    </div>
-  </div>`
-  })
-  dataPanel.innerHTML = rawHTML
-}
-
-//3. API 盒子用 https://github.com/ALPHACamp/movie-list-api#readme
+//3. 跳出MOADAL盒子用的API https://github.com/ALPHACamp/movie-list-api#readme
 
 function showMovieModal(id) {
   const modalTitle = document.querySelector('#movie-modal-title')
@@ -139,7 +124,6 @@ searchForm.addEventListener('submit', function onSearchFormSubmitted(e)  {
     //   return alert('請輸入有效內容！')
     // }
 
-
     //filter 篩選
     filteredMovies = [];
     for (const movie of allmovies) {
@@ -162,7 +146,7 @@ searchForm.addEventListener('submit', function onSearchFormSubmitted(e)  {
     renderPaginator(filteredMovies.length) 
     //重新渲染 預設顯示第 1 頁的搜尋結果
     // renderMovieList(filteredMovies);
-    renderMovieList(getMoviesByPage(1));
+    renderMovieList(getMoviesByPage(1));    
 
   })
 
@@ -186,12 +170,26 @@ showallbutton.addEventListener('click',function showall(){
 })
 
 
-//處理 增加我的最愛 的 電影
-
+//5.處理 增加我的最愛 的 電影
 const addfavoritebtn = document.querySelector(".btn-add-favorite"); 
 
+//加入最愛(運用 localStora)
+function addToFavorite(id) {
+  const list = JSON.parse(localStorage.getItem('favoriteMovies')) || []
+  //相較於filter 方法在陣列做篩選會找全部，find在找到第一個符合條件的 item 後就回停下來回傳該 item值。
+  const lovemovie = allmovies.find(function(allmovies) {return allmovies.id === id} )
+  // console.log("69:"+lovemovie.title);
+  //  console.log(lovemovie);
+  // 使用some處理已經選擇過的
+  if (list.some(function(allmovies) {return allmovies.id === id})) {
+    return alert('此電影已經在收藏清單中了！')
+  }
+  list.push(lovemovie)
+  localStorage.setItem('favoriteMovies', JSON.stringify(list))
+}
 
-//5. 重要新技巧: 分頁設定pagination，切出要的部分資料
+
+//6. 重要新技巧: 分頁設定pagination，切出要的部分資料
 
 const MOVIES_PER_PAGE = 12 
 function getMoviesByPage(page) {
@@ -204,18 +202,18 @@ function getMoviesByPage(page) {
 } 
 
 
-//6. 計算有幾個分頁的頁碼，再重新渲染到頁面下方 
+//6.1 計算有幾個分頁的頁碼，再重新渲染到頁面下方 
 const paginator = document.querySelector("#paginator"); 
 function renderPaginator(amount) {
   //計算總頁數，利用Math.ceil()的小數點無條件進位 功能 
   const numberOfPages = Math.ceil(amount / MOVIES_PER_PAGE)
-  //製作 template 
+  //製作 頁數碼 template 
   let str = '';
   for (let page = 1; page <= numberOfPages; page++) {
     str += `<li class="page-item"><a class="page-link" href="#" data-page="${page}">${page}</a></li>`
    }
   //放回 HTML  
-  paginator.innerHTML = str;
+  paginator.innerHTML = str; 
 }
 
 //點擊到分頁的頁碼 a 標籤，呼叫 renderMovieList 根據指定的頁數重新渲染頁面
@@ -226,7 +224,10 @@ paginator.addEventListener('click', function onPaginatorClicked(e) {
   const page = Number(e.target.dataset.page)
   //更新畫面，注意，丟進去的是 被切過的allmovies的資料
   renderMovieList(getMoviesByPage(page))
-  //解決小BUG 點及分頁會清除搜尋欄位的資料
+  //解決小BUG 點擊分頁會清除搜尋欄位的資料(但搜尋時不會清掉)
+  if (filteredMovies.length !== 0) {
+    return ;
+  }
   searchInput.value = '';
 })
 
