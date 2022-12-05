@@ -61,7 +61,7 @@ function renderMovieList(data) {
         </div>
         <div class="card-footer"> 
           <button class="btn btn-primary btn-show-movie" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${item.id}">More</button>
-          <button class="btn btn-danger btn-add-favorite" data-id="${item.id}">❤</button>
+          <button class="btn btn-danger btn-add-favorite" data-id="${item.id}" >❤</button>
         </div>
       </div>
     </div>
@@ -72,6 +72,7 @@ function renderMovieList(data) {
 
 
 const dataPanel = document.querySelector('#data-panel')
+const card_footer = document.querySelector(".card-footer");
 
 // 監聽 data panel ，設置彈出視窗的MORE的委派點擊事件
 dataPanel.addEventListener('click',function onPanelClicked(e){
@@ -85,6 +86,7 @@ dataPanel.addEventListener('click',function onPanelClicked(e){
     // console.log(e)
     // console.log(e.target.dataset.id)
     addToFavorite(Number(e.target.dataset.id));
+
     }
 })
 
@@ -180,12 +182,15 @@ function addToFavorite(id) {
   const lovemovie = allmovies.find(function(allmovies) {return allmovies.id === id} )
   // console.log("69:"+lovemovie.title);
   //  console.log(lovemovie);
-  // 使用some處理已經選擇過的
+    // 使用some處理已經選擇過的  
+    
+
   if (list.some(function(allmovies) {return allmovies.id === id})) {
     return alert('此電影已經在收藏清單中了！')
   }
+  
   list.push(lovemovie)
-  localStorage.setItem('favoriteMovies', JSON.stringify(list))
+  localStorage.setItem('favoriteMovies', JSON.stringify(list)) 
 }
 
 

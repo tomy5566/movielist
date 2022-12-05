@@ -6,7 +6,7 @@ const INDEX_URL = BASE_URL + '/api/v1/movies/'
 const POSTER_URL = BASE_URL + '/posters/'
 
 //2.最重要，要改這邊，是從localStorge引入 我的最愛資料
-const allmovies = JSON.parse(localStorage.getItem('favoriteMovies')) || [];
+let allmovies = JSON.parse(localStorage.getItem('favoriteMovies')) || [];
 console.log(allmovies);
 
 
@@ -40,7 +40,7 @@ function removeFromFavorite(id) {
   localStorage.setItem('favoriteMovies', JSON.stringify(allmovies))
   //更新 重新渲染頁面，也要重製分頁器
 
-  // 先找出被刪除的電影那一頁，避免畫面都跳回第一頁
+  //想到覺得很重要的地方: 先找出被刪除的電影那一頁，避免畫面都跳回第一頁
   const nowpage = Math.ceil(movieIndex / 12 );
   // renderMovieList(allmovies)
   renderMovieList(getMoviesByPage(nowpage));
@@ -149,7 +149,11 @@ searchForm.addEventListener('submit', function onSearchFormSubmitted(e)  {
 //顯示全部電影的按鈕
 const showallbutton = document.querySelector('#show-all-button')
 showallbutton.addEventListener('click',function showall(){
-  console.log("showall");
+   if( allmovies.length ==0 ) {
+    dataPanel.innerHTML = "我的最愛目前是空的，請重新添加"
+    return
+  }
+  // console.log("showall");
   renderMovieList(allmovies);
   //解決小BUG 點及分頁會清除搜尋欄位的資料
   searchInput.value = '';
@@ -166,8 +170,6 @@ const MOVIES_PER_PAGE = 12
 function getMoviesByPage(page) {
   //利用三元運算子判斷，是要用allmovies還是搜尋後的值filteredMovies
   const data = filteredMovies.length ? filteredMovies : allmovies
-  console.log("170:"+filteredMovies.length);
-
   //計算起始 index，第一頁0開始(0-11)，第二頁12開始(12-23)，依此類推
   const startIndex = (page - 1) * MOVIES_PER_PAGE
   //回傳切割後的新陣列，注意第二個參數  index 並不會包含在新陣列中
@@ -211,3 +213,23 @@ paginator.addEventListener('click', function onPaginatorClicked(e) {
 // renderMovieList(allmovies);
 renderMovieList(getMoviesByPage(1));
 renderPaginator(allmovies.length);
+
+
+
+//設定清空全部
+const clearAll= document.querySelector('#clear-all-button');
+clearAll.addEventListener('click',  clearALL , false);
+
+function clearALL(e){
+   localStorage.clear(e);
+   allmovies = [];   //也要清空DATA否則他下次會重新寫入
+   alert('全部都清空了');
+   renderMovieList(getMoviesByPage(1));
+   renderPaginator(allmovies.length);
+   dataPanel.innerHTML = "我的最愛已被清空，請重新添加"
+  
+
+  // //因為DOM改變  要重新抓一次 監聽一次 和上面重整一樣
+  // submitbtn = document.querySelector('.submitDatabtn');
+  // submitbtn.addEventListener('click', calcu, false);
+}
