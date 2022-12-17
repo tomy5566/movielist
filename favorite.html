@@ -25,7 +25,7 @@
 
 <body> 
       <!-- Navbar -->
-      <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-danger fixed-top">
         <div class="container-fluid">
           <a class="navbar-brand" href="#"> Favorite List 我的最愛電影</a>
           <button
@@ -64,26 +64,26 @@
         <div class="row mb-3">
                 <!-- 搜尋列 -->
             <form class="row row-cols-lg-auto g-3 align-items-center" id="search-form">
-              <div class="col-12">
-                <label class="visually-hidden" for="search-input">輸入電影名稱關鍵字</label>
-                <input type="text" class="form-control" id="search-input"  placeholder="請輸入電影名稱關鍵字">
+              <div class="col-3">
+                <label class="visually-hidden" for="search-input">請輸入名稱關鍵字</label>
+                <input type="text" class="form-control" id="search-input"  placeholder="請輸入名稱關鍵字">
             </div>
-              <div class="col-6">
+              <div class="col-3">
                 <button 
                 type="submit" 
                 class="btn btn-primary" 
-                id="search-submit-button">搜尋</button>
+                id="search-submit-button">開始搜尋電影</button>
               </div>
-              <div class="col-6">
+              <div class="col-3">
                 <button 
                 type="button" 
                 class="btn btn-info" 
-                id="show-all-button">顯示全部最愛電影</button>
+                id="show-all-button">顯示全部最愛</button>
               </div>
-              <div class="col-6">
+              <div class="col-3">
                 <button 
                 type="button" 
-                class="btn btn-info" 
+                class="btn btn-warning" 
                 id="clear-all-button">清空全部最愛</button>
               </div>
             </form>

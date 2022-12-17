@@ -4,8 +4,8 @@
 const BASE_URL = 'https://movie-list.alphacamp.io'
 const INDEX_URL = BASE_URL + '/api/v1/movies/'
 const POSTER_URL = BASE_URL + '/posters/'
+let allmovies = [];
 
-const allmovies = [];
 
 axios
   .get(INDEX_URL) // 修改這裡
@@ -13,19 +13,26 @@ axios
     // console.log(response)
     // console.log(response.data)
     // console.log(response.data.results)
-    for (const movie of response.data.results) {
-      allmovies.push(movie)
-    }
-    console.log(allmovies) 
+    allmovies = response.data.results;
+    //上面直接附值，不需要下面再跑FOR迴圈
+    // for (const movie of response.data.results) {
+    //   allmovies.push(movie)
+    // }
+    //  console.log(allmovies) 
+    //  console.log(allmovies[1]) 
+    // console.log("21")
+    // console.log(typeof allmovies)
+    // console.log("23:"+allmovies.length);
     //輸出全部電影
     // renderMovieList(allmovies);
     //更改成分頁設計 每次輸出一點(12個)
     renderMovieList(getMoviesByPage(1));
     //計算有幾頁
     renderPaginator(allmovies.length);
-    
+
   })
   .catch((err) => console.log(err))
+  
 
 
   //注意: 如果直接 allmovies.push(response.data.results)，那 allmovies 會變成一個只有 1 個元素的陣列
@@ -42,8 +49,13 @@ axios
   // 以上 說明後，寫回axios中
 
 
-//2. 渲染卡片
+
+
+  //2. 渲染卡片
 //寫完 renderMovieList 之後，要調用函式。要在 axios 程式碼中的 then() 中呼叫它，並把 allmovies 傳進去：
+
+// console.log(allmovies) 
+// console.log(allmovies[1]) 
 
 function renderMovieList(data) {
   let str = ''
@@ -235,4 +247,43 @@ paginator.addEventListener('click', function onPaginatorClicked(e) {
   }
   searchInput.value = '';
 })
+
+
+
+//測試:隨機數字 1~80 或是 allmovies.length
+// 教學 https://ithelp.ithome.com.tw/articles/10197904
+
+const showRandomMovie = document.querySelector('#show-random-button');
+showRandomMovie.addEventListener('click',function showRandomMovieFn(){
+  let randomNum=[];
+  let randommovielist = [];
+  for(i=0 ; i<8 ; i++){
+    let num = Math.floor(Math.random()*81);
+    //取六個數字 跑回圈!  如果重複就再跑一次
+    while(randomNum.includes(num)){
+      num = Math.floor(Math.random()*81);
+      }
+    randomNum.push(num);
+    randommovielist.push(allmovies[num-1]);
+    }    
+    
+
+  renderMovieList(randommovielist);
+  // console.log( randommovielist) ;
+  console.log( randomNum) ;
+    //解決小BUG 點及分頁會清除搜尋欄位的資料
+  searchInput.value = '';
+    //把最下面的分頁 改成1頁
+  let str=''; 
+  str +=`<li class="page-item"><a class="page-link" href=" " data-page="1">1</a></li>`
+  paginator.innerHTML = str;
+})
+// console.log(allmovies) ;
+
+//遇到的問題是 allmovies這個陣列在外面好像抓不到?
+// 例如下面這樣 很奇怪
+// console.log("261")
+// console.log(allmovies)
+// console.log(typeof allmovies)
+// console.log("264:"+allmovies.length);
 

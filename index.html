@@ -64,21 +64,27 @@
         <div class="row mb-3">
                 <!-- 搜尋列 -->
             <form class="row row-cols-lg-auto g-3 align-items-center" id="search-form">
-              <div class="col-12">
-                <label class="visually-hidden" for="search-input">輸入電影名稱關鍵字</label>
-                <input type="text" class="form-control" id="search-input"  placeholder="請輸入電影名稱關鍵字">
+              <div class="col-3">
+                <label class="visually-hidden" for="search-input">輸入名稱關鍵字</label>
+                <input type="text" class="form-control" id="search-input"  placeholder="請輸入名稱關鍵字">
             </div>
-              <div class="col-6">
+              <div class="col-3">
                 <button 
                 type="submit" 
                 class="btn btn-primary" 
-                id="search-submit-button">開始搜尋</button>
+                id="search-submit-button">開始搜尋電影</button>
               </div>
-              <div class="col-6">
+              <div class="col-3">
                 <button 
                 type="button" 
                 class="btn btn-info" 
                 id="show-all-button">顯示全部電影</button>
+              </div>
+              <div class="col-3">
+                <button 
+                type="button" 
+                class="btn btn-success" 
+                id="show-random-button">隨機顯示八部</button>
               </div>
             </form>
         </div>
