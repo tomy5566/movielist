@@ -1,4 +1,4 @@
-# movielist 電影清單練習專案readme
+# movielist 電影清單練習專案 Readme
 movielist 電影清單
 
 ## 主要介紹
